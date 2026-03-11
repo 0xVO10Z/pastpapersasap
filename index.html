@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Atif's Past Papers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0e0e0e;
+      --surface: #161616;
+      --border: #242424;
+      --border-hover: #3a3a3a;
+      --text-primary: #f0f0f0;
+      --text-secondary: #666;
+      --text-muted: #3d3d3d;
+      --badge-bg: #1e1e1e;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      padding: 64px 40px 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    header p {
+      margin-top: 6px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .papers-list {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .paper-row {
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      gap: 16px;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .paper-row:last-child {
+      border-bottom: none;
+    }
+
+    .paper-row:hover {
+      background: #1c1c1c;
+    }
+
+    .paper-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .paper-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+
+    .paper-meta h3 {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .paper-meta p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+
+    .paper-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 4px;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      transition: opacity 0.15s ease;
+      white-space: nowrap;
+      cursor: pointer;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    .btn-paper {
+      background: var(--text-primary);
+      color: #0e0e0e;
+    }
+
+    .btn-paper:hover { opacity: 0.85; }
+
+    .btn-ms {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ms:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 880px;
+      height: 88vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .modal-header h2 {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .modal-type-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .modal-type-paper {
+      background: #f0f0f0;
+      color: #0e0e0e;
+    }
+
+    .modal-type-ms {
+      background: #1e1e1e;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .modal-close {
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 640px) {
+      header { padding: 40px 20px 32px; }
+      .container { padding: 28px 20px 60px; }
+      .badge, .divider { display: none; }
+      .paper-row { padding: 16px 18px; flex-wrap: wrap; gap: 12px; }
+      .paper-left { flex: 1 1 100%; }
+      .paper-right { flex: 1 1 100%; justify-content: flex-start; }
+      .btn { flex: 1; justify-content: center; }
+      footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Atif's Past Papers</h1>
+    <p>Examination resources for revision</p>
+  </header>
+
+  <div class="container">
+    <p class="section-label">Available</p>
+    <div class="papers-list" id="papersList"></div>
+  </div>
+
+  <div class="modal-overlay" id="pdfModal" onclick="handleOverlayClick(event)">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <h2 id="modalTitle"></h2>
+          <span class="modal-type-badge" id="modalTypeBadge"></span>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <iframe id="pdfFrame" src="" title="PDF Viewer"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <footer>Atif's Past Papers · All rights reserved</footer>
+
+  <script>
+
+    const papers = [
+      {
+        icon: '🧪',
+        title: 'Chemistry Paper',
+        subject: 'Combined Science',
+        examboard: 'Edexcel',
+        tier: 'Foundation',
+        year: '2025',
+        paper: 'papers/chem-paper2-p.pdf',
+        markscheme: 'papers/chem-paper2-ms.pdf',
+      },
+
+    ];
+
+    const eyeIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const checkIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    function renderPapers() {
+      const list = document.getElementById('papersList');
+      list.innerHTML = papers.map(p => `
+        <div class="paper-row">
+          <div class="paper-left">
+            <div class="paper-icon">${p.icon}</div>
+            <div class="paper-meta">
+              <h3>${p.title}</h3>
+              <p>${p.examboard} · ${p.subject} · ${p.tier} · ${p.year}</p>
+            </div>
+          </div>
+          <div class="paper-right">
+            <span class="badge">${p.examboard}</span>
+            <span class="badge">${p.tier}</span>
+            <span class="badge">${p.year}</span>
+            <div class="divider"></div>
+            ${p.paper ? `
+              <button class="btn btn-paper" onclick="openPDF('${p.paper}', '${p.title} — ${p.subject} ${p.year}', 'paper')">
+                ${eyeIcon} Paper
+              </button>` : ''}
+            ${p.markscheme ? `
+              <button class="btn btn-ms" onclick="openPDF('${p.markscheme}', '${p.title} — ${p.subject} ${p.year}', 'ms')">
+                ${checkIcon} Mark Scheme
+              </button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openPDF(pdfPath, title, type) {
+      document.getElementById('modalTitle').textContent = title;
+      const badge = document.getElementById('modalTypeBadge');
+      badge.textContent = type === 'ms' ? 'Mark Scheme' : 'Paper';
+      badge.className = 'modal-type-badge ' + (type === 'ms' ? 'modal-type-ms' : 'modal-type-paper');
+      document.getElementById('pdfFrame').src = pdfPath;
+      document.getElementById('pdfModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('pdfModal').classList.remove('active');
+      document.getElementById('pdfFrame').src = '';
+      document.body.style.overflow = '';
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('pdfModal')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    renderPapers();
+
+  </script>
+
+</body>
+</html>
